@@ -1,0 +1,25 @@
+# Ignore node_modules (dependencies Node.js)
+node_modules/
+
+# Ignore env files (API keys and credentials)
+.env
+.env.local
+
+# Ignore start config files
+.DS_Store
+.vscode/
+.idea/
+
+# Ignore autofiles
+dist/
+build/
+*.log
+*.tmp
+
+# Ignore npm files
+npm-debug.log*
+package-lock.json
+yarn.lock
+
+# Ignorar SO files
+Thumbs.db
