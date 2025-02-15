@@ -3,6 +3,13 @@
   "version": "1.0.0",
   "description": "A Node.js server that listens to GitHub webhooks and sends notifications to Telegram.",
   "main": "index.js",
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/raamonsiu/GithubNotifierTelegramBot.git"
+  },
+  "bugs": {
+  "url": "https://github.com/raamonsiu/GithubNotifierTelegramBot/issues"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
