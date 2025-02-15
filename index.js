@@ -3,17 +3,18 @@ import axios from 'axios';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 
-// Cargar variables de entorno desde .env
+// Load environment variables from .env file
 dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
 
-// Configuración del bot de Telegram usando variables de entorno
-const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN; // Token de Telegram
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID; // ID de chat de Telegram
+// Telegram bot configuration using environment variables
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN; // Telegram token
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID; // Telegram chat ID
 const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
+// Check if the necessary environment variables are defined
 if (!TELEGRAM_TOKEN) {
     throw new Error('TELEGRAM_TOKEN environment variable is not defined');
 }
@@ -21,24 +22,23 @@ if (!TELEGRAM_CHAT_ID) {
     throw new Error('TELEGRAM_CHAT_ID environment variable is not defined');
 }
 
-
-// Lista de eventos válidos
+// List of valid GitHub events
 const validEvents = ['push', 'pull_request', 'issues', 'issue_comment', 'watch'];
 
-// Endpoint para recibir webhooks de GitHub
+// Endpoint to receive GitHub webhooks
 app.post('/webhook', (req, res) => {
-    const event = req.headers['x-github-event']; // Tipo de evento (push, pull_request, etc.)
+    const event = req.headers['x-github-event']; // Type of event (push, pull_request, etc.)
     const payload = req.body;
 
-    // Validar el tipo de evento
+    // Validate the event type
     if (!event) {
-        return res.status(400).send('Evento no definido');
+        return res.status(400).send('Event not defined');
     }
     if (!validEvents.includes(event)) {
-        return res.status(400).send('Evento no reconocido');
+        return res.status(400).send('Unrecognized event');
     }
 
-    // Validar la estructura del payload según el tipo de evento
+    // Validate the payload structure according to the event type
     if (!payload.repository || !payload.repository.full_name) {
         return res.status(400).send('Invalid payload: missing repository information');
     }
@@ -71,80 +71,80 @@ app.post('/webhook', (req, res) => {
             break;
     }
 
-    // Crear un mensaje genérico para cualquier evento
-    let message = `📢 ¡Nueva interacción en el repositorio!\n\n`;
-    message += `🔔 **Evento:** ${event}\n`;
-    message += `📂 **Repositorio:** ${payload.repository.full_name}\n`;
+    // Create a generic message for any event
+    let message = `📢 New interaction in the repository!\n\n`;
+    message += `🔔 **Event:** ${event}\n`;
+    message += `📂 **Repository:** ${payload.repository.full_name}\n`;
 
-    // Añadir detalles específicos según el tipo de evento
+    // Add specific details according to the event type
     switch (event) {
         case 'push':
-            message += `👤 **Autor:** ${payload.pusher.name}\n`;
-            message += `🔀 **Rama:** ${payload.ref}\n`;
+            message += `👤 **Author:** ${payload.pusher.name}\n`;
+            message += `🔀 **Branch:** ${payload.ref}\n`;
             message += `📝 **Commits:** ${payload.commits.length}\n`;
-            message += `📄 **Detalles de los commits:**\n`;
+            message += `📄 **Commit details:**\n`;
             payload.commits.forEach((commit, index) => {
                 message += `  - Commit ${index + 1}: ${commit.message} (${commit.id})\n`;
             });
             break;
         case 'pull_request':
-            message += `👤 **Usuario:** ${payload.sender.login}\n`;
-            message += `📝 **Acción:** ${payload.action}\n`;
-            message += `📄 **Título:** ${payload.pull_request.title}\n`;
-            message += `🔀 **Rama base:** ${payload.pull_request.base.ref}\n`;
-            message += `🔀 **Rama de head:** ${payload.pull_request.head.ref}\n`;
-            message += `📝 **Estado:** ${payload.pull_request.state}\n`;
-            message += `🔗 **URL del PR:** ${payload.pull_request.html_url}\n`;
+            message += `👤 **User:** ${payload.sender.login}\n`;
+            message += `📝 **Action:** ${payload.action}\n`;
+            message += `📄 **Title:** ${payload.pull_request.title}\n`;
+            message += `🔀 **Base branch:** ${payload.pull_request.base.ref}\n`;
+            message += `🔀 **Head branch:** ${payload.pull_request.head.ref}\n`;
+            message += `📝 **State:** ${payload.pull_request.state}\n`;
+            message += `🔗 **PR URL:** ${payload.pull_request.html_url}\n`;
 
-            // Notificar cuando se acepta un PR (se fusiona)
+            // Notify when a PR is merged
             if (payload.action === 'closed' && payload.pull_request.merged) {
-                message += `🎉 **¡PR fusionado!**\n`;
+                message += `🎉 **PR merged!**\n`;
             }
             break;
         case 'issues':
-            message += `👤 **Usuario:** ${payload.sender.login}\n`;
-            message += `📝 **Acción:** ${payload.action}\n`;
-            message += `📄 **Título:** ${payload.issue.title}\n`;
+            message += `👤 **User:** ${payload.sender.login}\n`;
+            message += `📝 **Action:** ${payload.action}\n`;
+            message += `📄 **Title:** ${payload.issue.title}\n`;
 
-            // Notificar cuando se cierra un issue
+            // Notify when an issue is closed
             if (payload.action === 'closed') {
-                message += `🔒 **¡Issue cerrado!**\n`;
+                message += `🔒 **Issue closed!**\n`;
             }
             break;
         case 'issue_comment':
-            message += `👤 **Usuario:** ${payload.sender.login}\n`;
-            message += `📝 **Acción:** ${payload.action}\n`;
-            message += `📄 **Comentario:** ${payload.comment.body}\n`;
-            message += `🔗 **URL del comentario:** ${payload.comment.html_url}\n`;
+            message += `👤 **User:** ${payload.sender.login}\n`;
+            message += `📝 **Action:** ${payload.action}\n`;
+            message += `📄 **Comment:** ${payload.comment.body}\n`;
+            message += `🔗 **Comment URL:** ${payload.comment.html_url}\n`;
 
-            // Notificar si hay una mención en el comentario
+            // Notify if there is a mention in the comment
             if (payload.comment.body.includes('@')) {
-                message += `👀 **¡Menciones en el comentario!**\n`;
+                message += `👀 **Mentions in the comment!**\n`;
             }
             break;
         case 'watch':
-            message += `👤 **Usuario:** ${payload.sender.login}\n`;
-            message += `⭐ **Acción:** ${payload.action}\n`;
+            message += `👤 **User:** ${payload.sender.login}\n`;
+            message += `⭐ **Action:** ${payload.action}\n`;
             break;
     }
 
-    // Enviar mensaje a Telegram con reintentos
+    // Send message to Telegram with retries
     const sendMessage = async (retries = 3) => {
         try {
             await axios.post(TELEGRAM_API_URL, {
                 chat_id: TELEGRAM_CHAT_ID,
                 text: message
             });
-            console.log('Mensaje enviado:', message);
+            console.log('Message sent:', message);
             res.status(200).send('OK');
         } catch (err) {
             if (retries > 0) {
-                console.warn(`Error enviando mensaje, reintentando... (${retries} intentos restantes)`, err);
+                console.warn(`Error sending message, retrying... (${retries} attempts left)`, err);
                 const delay = Math.pow(2, 3 - retries) * 1000; // Exponential backoff delay
                 setTimeout(() => sendMessage(retries - 1), delay);
             } else {
-                console.error('Error enviando mensaje después de varios intentos:', err);
-                res.status(500).send('Error enviando mensaje a Telegram');
+                console.error('Error sending message after multiple attempts:', err);
+                res.status(500).send('Error sending message to Telegram');
             }
         }
     };
@@ -152,8 +152,8 @@ app.post('/webhook', (req, res) => {
     sendMessage();
 });
 
-// Iniciar servidor
+// Start server
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
 });
