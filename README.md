@@ -162,4 +162,4 @@ Thanks to [GitHub](https://github.com) for their webhook system.
 
 Thanks to [Telegram](https://web.telegram.org) for their bot API.
 
-Inspired by the need for real-time notifications in development workflows.
+Inspired by the need for real-time notifications in development workflows.  
