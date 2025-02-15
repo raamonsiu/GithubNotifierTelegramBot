@@ -41,7 +41,7 @@ Follow these steps to set up your own GitHub to Telegram notifications bot:
 1. Open Telegram and search for **BotFather**.
 2. Use the `/newbot` command to create a new bot.
 3. Save the **bot token** provided by BotFather.
-4. Start a chat with your bot and send a message to it.
+4. Start a chat with your bot and send a message to it (it must be a NEW message, the ¨/new¨ auto-message isn´t a new one).
 5. Use the following URL to get your **chat ID** (replace `YOUR_BOT_TOKEN` with your actual token): https://api.telegram.org/botYOUR_BOT_TOKEN/getUpdates
 6. Look for the `id` field in the response under `chat`.
 
@@ -58,25 +58,37 @@ cd github-telegram-bot
 npm install
 ```
 
-### 5. Configure Environment Variables
+### 5. Configure Environment Variables 
 
-TELEGRAM_TOKEN=your_telegram_bot_token
-TELEGRAM_CHAT_ID=your_telegram_chat_id
+Open the `.env.example` file and change the variables as you need.  
+TELEGRAM_TOKEN=your_telegram_bot_token  
+TELEGRAM_CHAT_ID=your_telegram_chat_id  
+Save it as `.env`. (Withot .example extension).
 
-### 6. Run the Server Locally
+### 6. Install Ngrook
+
+1. Go to [Negrook](https://ngrok.com/downloads/windows) site and follow their instructions.  
+2. Copy the HTTPS URL provided by ngrok (e.g., https://abc123.ngrok.io).  
+--> - **Windows**: You can install with [`Chocolatey`](https://chocolatey.org/) or with their .exe file.  
+--> - **Linux**: Follow their instructions(XD)  
+3. Sign up, log in and have your own authtoken.  
+4. (Depending on how you installed it, you must add manually Negrook to path variable).  
+
+### 7. Run the Server Locally
 
 ```bash
 node index.js
 ```
 
-### 7. Expose Your Server to the Internet
+### 8. Expose Your Server to the Internet
 
 ```bash
 ngrok http 3000
 ```
-Copy the HTTPS URL provided by ngrok (e.g., https://abc123.ngrok.io).
+(3000 or any other PORT that you configured)
 
-### 8. Set Up GitHub Webhooks
+
+### 9. Set Up GitHub Webhooks
 
 1. **Go to your GitHub repository**:
    - Open your repository on GitHub.
@@ -95,7 +107,7 @@ Copy the HTTPS URL provided by ngrok (e.g., https://abc123.ngrok.io).
 4. **Save the webhook**:
    - Click the "Add webhook" button to save your configuration.
 
-### 9. Test the Bot
+### 10. Test the Bot
 
 Perform actions in your repository (e.g., push code, create a pull request, comment on an issue) and check your Telegram chat for notifications.
 
@@ -104,8 +116,9 @@ Perform actions in your repository (e.g., push code, create a pull request, comm
 github-telegram-bot/  
 ├── index.js            # Main server logic  
 ├── package.json        # Node.js dependencies  
+├── package-lock.json   # All dependencies done  
 ├── README.md           # Project documentation  
-├── .env.example        # Example environment variables  
+├── .env.example        # Example environment variables (You must change this file with your credentials) 
 └── .gitignore          # Files and folders to ignore  
 
 ## How to Contribute
