@@ -9,11 +9,6 @@ dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 
-// Telegram bot configuration using environment variables
-const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN; // Telegram token
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID; // Telegram chat ID
-const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-
 // Check if the necessary environment variables are defined
 if (!TELEGRAM_TOKEN) {
     throw new Error('TELEGRAM_TOKEN environment variable is not defined');
@@ -21,6 +16,13 @@ if (!TELEGRAM_TOKEN) {
 if (!TELEGRAM_CHAT_ID) {
     throw new Error('TELEGRAM_CHAT_ID environment variable is not defined');
 }
+if(!TELEGRAM_API_URL) {
+    throw new Error('TELEGRAM_API_URL environment variable is not defined');
+}
+
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
 // List of valid GitHub events
 const validEvents = ['push', 'pull_request', 'issues', 'issue_comment', 'watch'];
