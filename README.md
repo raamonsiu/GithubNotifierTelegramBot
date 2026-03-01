@@ -70,9 +70,15 @@ Save it as `.env`. (Withot .example extension).
 1. Go to [Negrook](https://ngrok.com/downloads/windows) site and follow their instructions.  
 2. Copy the HTTPS URL provided by ngrok (e.g., https://abc123.ngrok.io).  
 --> - **Windows**: You can install with [`Chocolatey`](https://chocolatey.org/) or with their .exe file.  
---> - **Linux**: Follow their instructions(XD)  
-3. Sign up, log in and have your own authtoken.  
-4. (Depending on how you installed it, you must add manually Negrook to path variable).  
+--> - **Linux**:
+   `curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
+  | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \
+  && echo "deb https://ngrok-agent.s3.amazonaws.com bookworm main" \
+  | sudo tee /etc/apt/sources.list.d/ngrok.list \
+  && sudo apt update \
+  && sudo apt install ngrok`
+4. Sign up, log in and have your own authtoken.  
+5. (Depending on how you installed it, you must add manually Negrook to path variable).  
 
 ### 7. Run the Server Locally
 
@@ -116,7 +122,7 @@ Perform actions in your repository (e.g., push code, create a pull request, comm
 github-telegram-bot/  
 ├── index.js            # Main server logic  
 ├── package.json        # Node.js dependencies  
-├── package-lock.json   # All dependencies done  
+├── package-lock.json   # All dependencies solved in my compilation
 ├── README.md           # Project documentation  
 ├── .env.example        # Example environment variables (You must change this file with your credentials) 
 └── .gitignore          # Files and folders to ignore  
